@@ -24,9 +24,6 @@ jobs:
     - name: Test
       run: go test -v ./...
       
-  check:
-    runs-on: ubuntu-latest
-    steps:
     - name: Run golangci-lint
       # You may pin to the exact commit or the version.
       # uses: golangci/golangci-lint-action@537aa1903e5d359d0b27dbc19ddd22c5087f3fbc
@@ -41,4 +38,8 @@ jobs:
       # You may pin to the exact commit or the version.
       # uses: tj-actions/coverage-badge-go@57e0c6b82e0bf6b0d486c4d8df22a51067f26fb7
       uses: tj-actions/coverage-badge-go@v1.2
-  
+      
+    - name: Go Coverage
+      # You may pin to the exact commit or the version.
+      # uses: gwatts/go-coverage-action@3c0cc6a187314c587a6369034fc4abf9db0e63ab
+      uses: gwatts/go-coverage-action@v1.1.2
