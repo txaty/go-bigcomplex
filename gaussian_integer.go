@@ -13,18 +13,19 @@ type GaussianInt struct {
 
 // String returns the string representation of the Gaussian integer
 func (g *GaussianInt) String() string {
+	rSign := g.R.Sign()
+	iSign := g.I.Sign()
 	res := ""
-	if g.R.Sign() != 0 {
+	if rSign != 0 {
 		res += g.R.String()
 	}
-	gISign := g.I.Sign()
-	if gISign == 0 {
+	if iSign == 0 {
 		if res == "" {
 			return "0"
 		}
 		return res
 	}
-	if gISign == 1 {
+	if iSign == 1 && rSign != 0 {
 		res += "+"
 	}
 	if g.I.Cmp(bigNeg1) == 0 {
@@ -118,9 +119,9 @@ func (g *GaussianInt) Conj(origin *GaussianInt) *GaussianInt {
 // Norm obtains the norm of the Gaussian integer
 func (g *GaussianInt) Norm() *big.Int {
 	norm := new(big.Int).Mul(g.R, g.R)
-	opt := iPool.Get().(*big.Int)
+	opt := iPool.Get().(*big.Int).Mul(g.I, g.I)
 	defer iPool.Put(opt)
-	norm.Add(norm, opt.Mul(g.I, g.I))
+	norm.Add(norm, opt)
 	return norm
 }
 

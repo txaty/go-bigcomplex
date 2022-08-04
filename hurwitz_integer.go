@@ -27,61 +27,62 @@ func (h *HurwitzInt) Init() *HurwitzInt {
 
 // String returns the string representation of the integral quaternion
 func (h *HurwitzInt) String() string {
-	if h.dblR.Sign() == 0 && h.dblI.Sign() == 0 && h.dblJ.Sign() == 0 && h.dblK.Sign() == 0 {
+	rSign := h.dblR.Sign()
+	iSign := h.dblI.Sign()
+	jSign := h.dblJ.Sign()
+	kSign := h.dblK.Sign()
+	rABS := iPool.Get().(*big.Int).Abs(h.dblR)
+	defer iPool.Put(rABS)
+	iABS := iPool.Get().(*big.Int).Abs(h.dblI)
+	defer iPool.Put(iABS)
+	jABS := iPool.Get().(*big.Int).Abs(h.dblJ)
+	defer iPool.Put(jABS)
+	kABS := iPool.Get().(*big.Int).Abs(h.dblK)
+	defer iPool.Put(kABS)
+	if rSign == 0 && iSign == 0 && jSign == 0 && kSign == 0 {
 		return "0"
 	}
 	res := ""
-	if h.dblR.Cmp(big1) == 0 {
-		res += "0.5"
-	} else if h.dblR.Cmp(bigNeg1) == 0 {
-		res += "-0.5"
-	} else if h.dblR.Sign() != 0 {
-		res += new(big.Int).Rsh(h.dblR, 1).String()
-		if h.dblR.Bit(0) == 1 {
-			res += ".5"
+	if rABS.Cmp(big2) == 0 {
+		if rSign < 0 {
+			res += "-"
 		}
+		res += "1"
+	} else {
+		res += hiComposeString(0, iSign, rABS, "")
 	}
-	if h.dblI.Cmp(big1) == 0 {
-		res += "0.5i"
-	} else if h.dblI.Cmp(bigNeg1) == 0 {
-		res += "-0.5i"
-	} else if h.dblI.Sign() != 0 {
-		if h.dblR.Sign() == 1 {
-			res += "+"
-		}
-		res += new(big.Int).Rsh(h.dblI, 1).String()
-		if h.dblI.Bit(0) == 1 {
-			res += ".5"
-		}
-		res += "i"
+	res += hiComposeString(rSign, iSign, iABS, "i")
+	res += hiComposeString(iSign, jSign, jABS, "j")
+	res += hiComposeString(jSign, kSign, kABS, "k")
+	return res
+}
+
+func hiComposeString(lastSign, thisSign int, abs *big.Int, sign string) string {
+	res := ""
+	if lastSign != 0 && thisSign == 1 {
+		res += "+"
+	} else if thisSign == -1 {
+		res += "-"
 	}
-	if h.dblJ.Cmp(big1) == 0 {
-		res += "0.5j"
-	} else if h.dblJ.Cmp(bigNeg1) == 0 {
-		res += "-0.5j"
-	} else if h.dblJ.Sign() != 0 {
-		if h.dblJ.Sign() == 1 {
-			res += "+"
+	if abs.Cmp(big1) == 0 {
+		if thisSign == 1 {
+			res += "0.5"
+		} else {
+			res += "-0.5"
 		}
-		res += new(big.Int).Rsh(h.dblJ, 1).String()
-		if h.dblJ.Bit(0) == 1 {
+	} else if abs.Cmp(big2) == 0 {
+		if thisSign == 1 {
+			res += sign
+		} else {
+			res += "-" + sign
+		}
+	} else if abs.Sign() != 0 {
+		opt := iPool.Get().(*big.Int)
+		res += opt.Rsh(abs, 1).String()
+		if abs.Bit(0) == 1 {
 			res += ".5"
 		}
-		res += "j"
-	}
-	if h.dblK.Cmp(big1) == 0 {
-		res += "0.5j"
-	} else if h.dblK.Cmp(bigNeg1) == 0 {
-		res += "-0.5j"
-	} else if h.dblK.Sign() != 0 {
-		if h.dblK.Sign() == 1 {
-			res += "+"
-		}
-		res += new(big.Int).Rsh(h.dblK, 1).String()
-		if h.dblK.Bit(0) == 1 {
-			res += ".5"
-		}
-		res += "k"
+		res += sign
 	}
 	return res
 }
@@ -147,10 +148,10 @@ func (h *HurwitzInt) Val() (r, i, j, k *big.Float) {
 // ValInt reveals value of a Hurwitz integer in integer
 func (h *HurwitzInt) ValInt() (r, i, j, k *big.Int) {
 	rF, iF, jF, kF := h.Val()
-	r = roundFloat(rF, nil)
-	i = roundFloat(iF, nil)
-	j = roundFloat(jF, nil)
-	k = roundFloat(kF, nil)
+	roundFloat(rF, r)
+	roundFloat(iF, i)
+	roundFloat(jF, j)
+	roundFloat(kF, k)
 	return
 }
 
@@ -277,10 +278,22 @@ func (h *HurwitzInt) Copy() *HurwitzInt {
 // the product (a1 + b1j + c1k + d1)(a2 + b2j + c2k + d2) is determined by the products of the
 // basis elements and the distributive law
 func (h *HurwitzInt) Prod(a, b *HurwitzInt) *HurwitzInt {
-	r := new(big.Int)
-	i := new(big.Int)
-	j := new(big.Int)
-	k := new(big.Int)
+	if h.dblR == nil {
+		h.dblR = new(big.Int)
+	}
+	r := h.dblR
+	if h.dblI == nil {
+		h.dblI = new(big.Int)
+	}
+	i := h.dblI
+	if h.dblJ == nil {
+		h.dblJ = new(big.Int)
+	}
+	j := h.dblJ
+	if h.dblK == nil {
+		h.dblK = new(big.Int)
+	}
+	k := h.dblK
 	opt := iPool.Get().(*big.Int)
 	defer iPool.Put(opt)
 	// 1 part
@@ -311,7 +324,6 @@ func (h *HurwitzInt) Prod(a, b *HurwitzInt) *HurwitzInt {
 	k.Add(k, opt.Mul(a.dblK, b.dblR))
 	k.Rsh(k, 1)
 
-	h.dblR, h.dblI, h.dblJ, h.dblK = r, i, j, k
 	return h
 }
 

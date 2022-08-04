@@ -160,6 +160,30 @@ func TestGaussianInt_String(t *testing.T) {
 			},
 			want: "-1-i",
 		},
+		{
+			name: "test_i",
+			fields: fields{
+				R: big.NewInt(0),
+				I: big.NewInt(1),
+			},
+			want: "i",
+		},
+		{
+			name: "test_-i",
+			fields: fields{
+				R: big.NewInt(0),
+				I: big.NewInt(-1),
+			},
+			want: "-i",
+		},
+		{
+			name: "test_0",
+			fields: fields{
+				R: big.NewInt(0),
+				I: big.NewInt(0),
+			},
+			want: "0",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -169,6 +193,86 @@ func TestGaussianInt_String(t *testing.T) {
 			}
 			if got := g.String(); got != tt.want {
 				t.Errorf("String() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestGaussianInt_Set(t *testing.T) {
+	type fields struct {
+		R *big.Int
+		I *big.Int
+	}
+	type args struct {
+		a *GaussianInt
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   *GaussianInt
+	}{
+		{
+			name: "test_1+i",
+			fields: fields{
+				R: nil,
+				I: nil,
+			},
+			args: args{
+				a: NewGaussianInt(big.NewInt(1), big.NewInt(1)),
+			},
+			want: NewGaussianInt(big.NewInt(1), big.NewInt(1)),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			g := &GaussianInt{
+				R: tt.fields.R,
+				I: tt.fields.I,
+			}
+			if got := g.Set(tt.args.a); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Set() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestGaussianInt_Sub(t *testing.T) {
+	type fields struct {
+		R *big.Int
+		I *big.Int
+	}
+	type args struct {
+		a *GaussianInt
+		b *GaussianInt
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   *GaussianInt
+	}{
+		{
+			name: "test_1+i - 1+i",
+			fields: fields{
+				R: nil,
+				I: nil,
+			},
+			args: args{
+				a: NewGaussianInt(big.NewInt(1), big.NewInt(1)),
+				b: NewGaussianInt(big.NewInt(1), big.NewInt(1)),
+			},
+			want: NewGaussianInt(big.NewInt(0), big.NewInt(0)),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			g := &GaussianInt{
+				R: tt.fields.R,
+				I: tt.fields.I,
+			}
+			if got := g.Sub(tt.args.a, tt.args.b); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Sub() = %v, want %v", got, tt.want)
 			}
 		})
 	}
