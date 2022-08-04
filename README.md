@@ -8,18 +8,19 @@ Big complex number calculation library for Go (with [math/big](https://pkg.go.de
 
 Currently, the library supports:
 
-1. Gaussian
-   integer <img src="http://www.sciweavers.org/tex2img.php?eq=Z%5Bi%5D%20%3D%20%5C%7Ba%20%2B%20bi%5C%20%7C%5C%20a%2C%20b%20%20%5Cin%20Z%5C%7D%2C%20where%5C%20i%5E2%20%3D%20-1&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0" align="center" border="0" alt="Z[i] = \{a + bi\ |\ a, b  \in Z\}, where\ i^2 = -1" height="21" />:
-   Complex numbers whose real and imaginary parts are both integers.
-2. Hurwitz
-   quaternion <img src="http://www.sciweavers.org/tex2img.php?eq=H%20%3D%20%5C%7Ba%20%2B%20bi%20%2B%20cj%20%2B%20dk%20%20%5Cin%20%5Cmathbb%7BH%7D%5C%20%7C%5C%20a%2Cb%2Cc%2Cd%20%20%5Cin%20%5Cmathbb%7BZ%7D%5C%20or%5C%20%5Ca%2Cb%2Cc%2Cd%20%20%5Cin%20%5Cmathbb%7BZ%7D%20%2B%20%5Cfrac%7B1%7D%7B2%7D%5C%7D&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0" align="center" border="0" alt="H = \{a + bi + cj + dk  \in \mathbb{H}\ |\ a,b,c,d  \in \mathbb{Z}\ or\ \a,b,c,d  \in \mathbb{Z} + \frac{1}{2}\}" height="21" />:
-   Quaternions whose components are either all integers or all half-integers (halves of odd integers; a mixture of
-   integers and half-integers is excluded).
+1. Gaussian integer, complex numbers whose real and imaginary parts are both integers:
+
+   ![gaussian_int](asset/image/gaussian_integer_formula.jpg)
+
+2. Hurwitz quaternion, quaternions whose components are either all integers or all half-integers (halves of odd
+   integers; a mixture of integers and half-integers is excluded):
+
+   ![hurwitz_int](asset/image/hurwitz_integer_formula.jpg)
 
 ## Installation
 
 ```bash
-go get github.com/tommytim0515/go-bigcomplex
+go get -u github.com/tommytim0515/go-bigcomplex
 ```
 
 ## Examples
@@ -44,14 +45,16 @@ func main() {
    fmt.Println(gcd)
 
    // Hurwitz integer calculation
-   h1 := bc.NewHurwitzInt(big.NewInt(1), big.NewInt(1), big.NewInt(1), big.NewInt(1), false) // 1 + i + j + k
-   h2 := bc.NewHurwitzInt(big.NewInt(3), big.NewInt(2), big.NewInt(2), big.NewInt(3), true) // 3/2 + i + j + 3k/2
+   // 1 + i + j + k
+   h1 := bc.NewHurwitzInt(big.NewInt(1), big.NewInt(1), big.NewInt(1), big.NewInt(1), false)
+   // 3/2 + i + j + 3k/2
+   h2 := bc.NewHurwitzInt(big.NewInt(3), big.NewInt(2), big.NewInt(2), big.NewInt(3), true)
    prod := new(bc.HurwitzInt).Pord(h1, h2)
    fmt.Println(prod)
 }
 ````
 
-## Why this Library?
+## Why This Library?
 
 Fan fact: Golang has native complex number types: ```complex64``` and ```complex128```.
 
