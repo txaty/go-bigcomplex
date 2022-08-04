@@ -39,18 +39,20 @@ import (
 
 func main() {
    // Gaussian integer calculation
-   g1 := bc.NewGaussianInt(big.NewInt(1), big.NewInt(2)) // 1 + 2i
-   g2 := bc.NewGaussianInt(big.NewInt(5), big.NewInt(6)) // 5 + 6i
+   g1 := bc.NewGaussianInt(big.NewInt(5), big.NewInt(6)) // 5 + 6i
+   g2 := bc.NewGaussianInt(big.NewInt(1), big.NewInt(2)) // 1 + 2i
+   div := new(bc.GaussianInt).Div(g2, g1)
+   fmt.Println(div) // 3 - i
    gcd := new(bc.GaussianInt).GCD(g1, g2)
-   fmt.Println(gcd)
+   fmt.Println(gcd) // i
 
    // Hurwitz integer calculation
    // 1 + i + j + k
    h1 := bc.NewHurwitzInt(big.NewInt(1), big.NewInt(1), big.NewInt(1), big.NewInt(1), false)
    // 3/2 + i + j + 3k/2
    h2 := bc.NewHurwitzInt(big.NewInt(3), big.NewInt(2), big.NewInt(2), big.NewInt(3), true)
-   prod := new(bc.HurwitzInt).Pord(h1, h2)
-   fmt.Println(prod)
+   prod := new(bc.HurwitzInt).Prod(h1, h2)
+   fmt.Println(prod) // 2 + 3i + 2j + 3k
 }
 ````
 

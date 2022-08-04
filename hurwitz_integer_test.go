@@ -95,6 +95,26 @@ func TestHurwitzInt_String(t *testing.T) {
 			},
 			want: "1.5+1.5i+1.5j+1.5k",
 		},
+		{
+			name: "test_0.5+0.5i+0.5j+0.5k",
+			fields: fields{
+				dblR: big.NewInt(1),
+				dblI: big.NewInt(1),
+				dblJ: big.NewInt(1),
+				dblK: big.NewInt(1),
+			},
+			want: "0.5+0.5i+0.5j+0.5k",
+		},
+		{
+			name: "test_-0.5i-0.5j+0.5k",
+			fields: fields{
+				dblR: big.NewInt(0),
+				dblI: big.NewInt(-1),
+				dblJ: big.NewInt(-1),
+				dblK: big.NewInt(1),
+			},
+			want: "-0.5i-0.5j+0.5k",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

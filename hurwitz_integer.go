@@ -61,14 +61,12 @@ func hiComposeString(lastSign, thisSign int, abs *big.Int, sign string) string {
 	res := ""
 	if lastSign != 0 && thisSign == 1 {
 		res += "+"
-	} else if thisSign == -1 {
-		res += "-"
 	}
 	if abs.Cmp(big1) == 0 {
 		if thisSign == 1 {
-			res += "0.5"
+			res += "0.5" + sign
 		} else {
-			res += "-0.5"
+			res += "-0.5" + sign
 		}
 	} else if abs.Cmp(big2) == 0 {
 		if thisSign == 1 {
