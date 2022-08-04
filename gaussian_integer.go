@@ -166,6 +166,11 @@ func (g *GaussianInt) Div(a, b *GaussianInt) *GaussianInt {
 	return quotient
 }
 
+// Equals checks if two Gaussian integers are equal
+func (g *GaussianInt) Equals(a *GaussianInt) bool {
+	return g.R.Cmp(a.R) == 0 && g.I.Cmp(a.I) == 0
+}
+
 // IsZero returns true if the Gaussian integer is equal to zero
 func (g *GaussianInt) IsZero() bool {
 	return g.R.Sign() == 0 && g.I.Sign() == 0

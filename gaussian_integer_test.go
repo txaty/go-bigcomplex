@@ -253,7 +253,7 @@ func TestGaussianInt_Sub(t *testing.T) {
 		want   *GaussianInt
 	}{
 		{
-			name: "test_1+i - 1+i",
+			name: "test_(1+i)-(1+i)",
 			fields: fields{
 				R: nil,
 				I: nil,
@@ -271,8 +271,62 @@ func TestGaussianInt_Sub(t *testing.T) {
 				R: tt.fields.R,
 				I: tt.fields.I,
 			}
-			if got := g.Sub(tt.args.a, tt.args.b); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Sub() = %v, want %v", got, tt.want)
+			g.Sub(tt.args.a, tt.args.b)
+			if !g.Equals(tt.want) {
+				println(g.R)
+				println(g.I)
+				println(tt.want.R)
+				t.Errorf("Sub() = %v, want %v", g, tt.want)
+			}
+		})
+	}
+}
+
+func TestGaussianInt_Equals(t *testing.T) {
+	type fields struct {
+		R *big.Int
+		I *big.Int
+	}
+	type args struct {
+		a *GaussianInt
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   bool
+	}{
+		{
+			name: "test_1+i==1+i",
+			fields: fields{
+				R: big.NewInt(1),
+				I: big.NewInt(1),
+			},
+			args: args{
+				a: NewGaussianInt(big.NewInt(1), big.NewInt(1)),
+			},
+			want: true,
+		},
+		{
+			name: "test_-1+i!=1+i",
+			fields: fields{
+				R: big.NewInt(-1),
+				I: big.NewInt(1),
+			},
+			args: args{
+				a: NewGaussianInt(big.NewInt(1), big.NewInt(1)),
+			},
+			want: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			g := &GaussianInt{
+				R: tt.fields.R,
+				I: tt.fields.I,
+			}
+			if got := g.Equals(tt.args.a); got != tt.want {
+				t.Errorf("Equals() = %v, want %v", got, tt.want)
 			}
 		})
 	}

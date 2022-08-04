@@ -406,6 +406,14 @@ func (h *HurwitzInt) GCRD(a, b *HurwitzInt) *HurwitzInt {
 	}
 }
 
+// Equals checks if the two Hurwitz integers are equal
+func (h *HurwitzInt) Equals(a *HurwitzInt) bool {
+	return h.dblR.Cmp(a.dblR) == 0 &&
+		h.dblI.Cmp(a.dblI) == 0 &&
+		h.dblJ.Cmp(a.dblJ) == 0 &&
+		h.dblK.Cmp(a.dblK) == 0
+}
+
 // IsZero returns true if the Hurwitz integer is zero
 func (h *HurwitzInt) IsZero() bool {
 	return h.dblR.Sign() == 0 &&
