@@ -1,3 +1,3 @@
-module github.com/tommytim0515/go-bigcomplex
+module github.com/txaty/go-bigcomplex
 
 go 1.18

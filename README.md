@@ -1,7 +1,7 @@
 # Big Complex
 
-[![Go Reference](https://pkg.go.dev/badge/github.com/tommytim0515/go-bigcomplex.svg)](https://pkg.go.dev/github.com/tommytim0515/go-bigcomplex)
-[![Go Report Card](https://goreportcard.com/badge/github.com/tommytim0515/go-bigcomplex)](https://goreportcard.com/report/github.com/tommytim0515/go-bigcomplex)
+[![Go Reference](https://pkg.go.dev/badge/github.com/txaty/go-bigcomplex.svg)](https://pkg.go.dev/github.com/txaty/go-bigcomplex)
+[![Go Report Card](https://goreportcard.com/badge/github.com/txaty/go-bigcomplex)](https://goreportcard.com/report/github.com/txaty/go-bigcomplex)
 ![Coverage](https://img.shields.io/badge/Coverage-43.1%25-yellow)
 
 Big complex number calculation library for Go (with [math/big](https://pkg.go.dev/math/big)).
@@ -20,7 +20,7 @@ Currently, the library supports:
 ## Installation
 
 ```bash
-go get -u github.com/tommytim0515/go-bigcomplex
+go get -u github.com/txaty/go-bigcomplex
 ```
 
 ## Examples
@@ -34,7 +34,7 @@ import (
    "fmt"
    "math/big"
 
-   bc "github.com/tommytim0515/go-bigcomplex"
+   bc "github.com/txaty/go-bigcomplex"
 )
 
 func main() {
