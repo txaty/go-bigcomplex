@@ -2,7 +2,7 @@
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/txaty/go-bigcomplex.svg)](https://pkg.go.dev/github.com/txaty/go-bigcomplex)
 [![Go Report Card](https://goreportcard.com/badge/github.com/txaty/go-bigcomplex)](https://goreportcard.com/report/github.com/txaty/go-bigcomplex)
-![Coverage](https://img.shields.io/badge/Coverage-43.1%25-yellow)
+![Coverage](https://img.shields.io/badge/Coverage-47.4%25-yellow)
 
 Big complex number calculation library for Go (with [math/big](https://pkg.go.dev/math/big)).
 
