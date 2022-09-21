@@ -155,10 +155,10 @@ func (g *GaussianInt) Div(a, b *GaussianInt) *GaussianInt {
 
 	rsInt := iPool.Get().(*big.Int)
 	defer iPool.Put(rsInt)
-	roundFloat(realScalar, rsInt)
+	rsInt = roundFloat(realScalar)
 	isInt := iPool.Get().(*big.Int)
 	defer iPool.Put(isInt)
-	roundFloat(imagScalar, isInt)
+	isInt = roundFloat(imagScalar)
 	quotient := NewGaussianInt(rsInt, isInt)
 	opt := giPool.Get().(*GaussianInt)
 	defer giPool.Put(opt)

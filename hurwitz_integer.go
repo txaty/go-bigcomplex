@@ -146,10 +146,10 @@ func (h *HurwitzInt) Val() (r, i, j, k *big.Float) {
 // ValInt reveals value of a Hurwitz integer in integer
 func (h *HurwitzInt) ValInt() (r, i, j, k *big.Int) {
 	rF, iF, jF, kF := h.Val()
-	roundFloat(rF, r)
-	roundFloat(iF, i)
-	roundFloat(jF, j)
-	roundFloat(kF, k)
+	r = roundFloat(rF)
+	i = roundFloat(iF)
+	j = roundFloat(jF)
+	k = roundFloat(kF)
 	return
 }
 
@@ -360,16 +360,16 @@ func (h *HurwitzInt) Div(a, b *HurwitzInt) *HurwitzInt {
 
 	rsInt := iPool.Get().(*big.Int)
 	defer iPool.Put(rsInt)
-	roundFloat(rScalar, rsInt)
+	rsInt = roundFloat(rScalar)
 	isInt := iPool.Get().(*big.Int)
 	defer iPool.Put(isInt)
-	roundFloat(iScalar, isInt)
+	isInt = roundFloat(iScalar)
 	jsInt := iPool.Get().(*big.Int)
 	defer iPool.Put(jsInt)
-	roundFloat(jScalar, jsInt)
+	jsInt = roundFloat(jScalar)
 	ksInt := iPool.Get().(*big.Int)
 	defer iPool.Put(ksInt)
-	roundFloat(kScalar, ksInt)
+	ksInt = roundFloat(kScalar)
 
 	quotient := NewHurwitzInt(rsInt, isInt, jsInt, ksInt, false)
 	opt := hiPool.Get().(*HurwitzInt)
