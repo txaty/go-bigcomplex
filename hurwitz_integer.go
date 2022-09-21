@@ -1,3 +1,25 @@
+// MIT License
+//
+// Copyright (c) 2022 Tommy TIAN
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
 package complex
 
 import (
@@ -146,10 +168,10 @@ func (h *HurwitzInt) Val() (r, i, j, k *big.Float) {
 // ValInt reveals value of a Hurwitz integer in integer
 func (h *HurwitzInt) ValInt() (r, i, j, k *big.Int) {
 	rF, iF, jF, kF := h.Val()
-	roundFloat(rF, r)
-	roundFloat(iF, i)
-	roundFloat(jF, j)
-	roundFloat(kF, k)
+	r = roundFloat(rF)
+	i = roundFloat(iF)
+	j = roundFloat(jF)
+	k = roundFloat(kF)
 	return
 }
 
@@ -360,16 +382,16 @@ func (h *HurwitzInt) Div(a, b *HurwitzInt) *HurwitzInt {
 
 	rsInt := iPool.Get().(*big.Int)
 	defer iPool.Put(rsInt)
-	roundFloat(rScalar, rsInt)
+	rsInt = roundFloat(rScalar)
 	isInt := iPool.Get().(*big.Int)
 	defer iPool.Put(isInt)
-	roundFloat(iScalar, isInt)
+	isInt = roundFloat(iScalar)
 	jsInt := iPool.Get().(*big.Int)
 	defer iPool.Put(jsInt)
-	roundFloat(jScalar, jsInt)
+	jsInt = roundFloat(jScalar)
 	ksInt := iPool.Get().(*big.Int)
 	defer iPool.Put(ksInt)
-	roundFloat(kScalar, ksInt)
+	ksInt = roundFloat(kScalar)
 
 	quotient := NewHurwitzInt(rsInt, isInt, jsInt, ksInt, false)
 	opt := hiPool.Get().(*HurwitzInt)

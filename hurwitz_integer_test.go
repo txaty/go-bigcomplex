@@ -130,3 +130,57 @@ func TestHurwitzInt_String(t *testing.T) {
 		})
 	}
 }
+
+func TestHurwitzInt_ValInt(t *testing.T) {
+	type fields struct {
+		dblR *big.Int
+		dblI *big.Int
+		dblJ *big.Int
+		dblK *big.Int
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		wantR  *big.Int
+		wantI  *big.Int
+		wantJ  *big.Int
+		wantK  *big.Int
+	}{
+		{
+			name: "test_1+i+j+k",
+			fields: fields{
+				dblR: big.NewInt(2),
+				dblI: big.NewInt(2),
+				dblJ: big.NewInt(2),
+				dblK: big.NewInt(2),
+			},
+			wantR: big.NewInt(1),
+			wantI: big.NewInt(1),
+			wantJ: big.NewInt(1),
+			wantK: big.NewInt(1),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			h := &HurwitzInt{
+				dblR: tt.fields.dblR,
+				dblI: tt.fields.dblI,
+				dblJ: tt.fields.dblJ,
+				dblK: tt.fields.dblK,
+			}
+			gotR, gotI, gotJ, gotK := h.ValInt()
+			if !reflect.DeepEqual(gotR, tt.wantR) {
+				t.Errorf("ValInt() gotR = %v, want %v", gotR, tt.wantR)
+			}
+			if !reflect.DeepEqual(gotI, tt.wantI) {
+				t.Errorf("ValInt() gotI = %v, want %v", gotI, tt.wantI)
+			}
+			if !reflect.DeepEqual(gotJ, tt.wantJ) {
+				t.Errorf("ValInt() gotJ = %v, want %v", gotJ, tt.wantJ)
+			}
+			if !reflect.DeepEqual(gotK, tt.wantK) {
+				t.Errorf("ValInt() gotK = %v, want %v", gotK, tt.wantK)
+			}
+		})
+	}
+}
