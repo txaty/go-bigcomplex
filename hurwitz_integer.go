@@ -298,22 +298,7 @@ func (h *HurwitzInt) Copy() *HurwitzInt {
 // the product (a1 + b1j + c1k + d1)(a2 + b2j + c2k + d2) is determined by the products of the
 // basis elements and the distributive law
 func (h *HurwitzInt) Prod(a, b *HurwitzInt) *HurwitzInt {
-	if h.dblR == nil {
-		h.dblR = new(big.Int)
-	}
-	r := h.dblR
-	if h.dblI == nil {
-		h.dblI = new(big.Int)
-	}
-	i := h.dblI
-	if h.dblJ == nil {
-		h.dblJ = new(big.Int)
-	}
-	j := h.dblJ
-	if h.dblK == nil {
-		h.dblK = new(big.Int)
-	}
-	k := h.dblK
+	r, i, j, k := new(big.Int), new(big.Int), new(big.Int), new(big.Int)
 	opt := iPool.Get().(*big.Int)
 	defer iPool.Put(opt)
 	// 1 part
@@ -343,6 +328,8 @@ func (h *HurwitzInt) Prod(a, b *HurwitzInt) *HurwitzInt {
 	k.Sub(k, opt.Mul(a.dblJ, b.dblI))
 	k.Add(k, opt.Mul(a.dblK, b.dblR))
 	k.Rsh(k, 1)
+
+	h.dblR, h.dblI, h.dblJ, h.dblK = r, i, j, k
 
 	return h
 }

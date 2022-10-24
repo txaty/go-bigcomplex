@@ -24,7 +24,7 @@ func TestHurwitzInt_Prod(t *testing.T) {
 		want   *HurwitzInt
 	}{
 		{
-			name: "test_(1+i+j+k)+(1+i+j+k)",
+			name: "test_(1+i+j+k) * (1+i+j+k)",
 			fields: fields{
 				dblR: nil,
 				dblI: nil,
@@ -36,6 +36,20 @@ func TestHurwitzInt_Prod(t *testing.T) {
 				b: NewHurwitzInt(big.NewInt(1), big.NewInt(1), big.NewInt(1), big.NewInt(1), false),
 			},
 			want: NewHurwitzInt(big.NewInt(-2), big.NewInt(2), big.NewInt(2), big.NewInt(2), false),
+		},
+		{
+			name: "test_2i * 1",
+			fields: fields{
+				dblR: nil,
+				dblI: nil,
+				dblJ: nil,
+				dblK: nil,
+			},
+			args: args{
+				a: NewHurwitzInt(big.NewInt(0), big.NewInt(2), big.NewInt(0), big.NewInt(0), false),
+				b: NewHurwitzInt(big.NewInt(1), big.NewInt(0), big.NewInt(0), big.NewInt(0), false),
+			},
+			want: NewHurwitzInt(big.NewInt(0), big.NewInt(2), big.NewInt(0), big.NewInt(0), false),
 		},
 	}
 	for _, tt := range tests {
