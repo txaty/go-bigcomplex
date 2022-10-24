@@ -298,47 +298,38 @@ func (h *HurwitzInt) Copy() *HurwitzInt {
 // the product (a1 + b1j + c1k + d1)(a2 + b2j + c2k + d2) is determined by the products of the
 // basis elements and the distributive law
 func (h *HurwitzInt) Prod(a, b *HurwitzInt) *HurwitzInt {
-	if h.dblR == nil {
-		h.dblR = new(big.Int)
-	}
-	if h.dblI == nil {
-		h.dblI = new(big.Int)
-	}
-	if h.dblJ == nil {
-		h.dblJ = new(big.Int)
-	}
-	if h.dblK == nil {
-		h.dblK = new(big.Int)
-	}
+	r, i, j, k := new(big.Int), new(big.Int), new(big.Int), new(big.Int)
 	opt := iPool.Get().(*big.Int)
 	defer iPool.Put(opt)
 	// 1 part
-	h.dblR.Mul(a.dblR, b.dblR)
-	h.dblR.Sub(h.dblR, opt.Mul(a.dblI, b.dblI))
-	h.dblR.Sub(h.dblR, opt.Mul(a.dblJ, b.dblJ))
-	h.dblR.Sub(h.dblR, opt.Mul(a.dblK, b.dblK))
-	h.dblR.Rsh(h.dblR, 1)
+	r.Mul(a.dblR, b.dblR)
+	r.Sub(r, opt.Mul(a.dblI, b.dblI))
+	r.Sub(r, opt.Mul(a.dblJ, b.dblJ))
+	r.Sub(r, opt.Mul(a.dblK, b.dblK))
+	r.Rsh(r, 1)
 
 	// i part
-	h.dblI.Mul(a.dblR, b.dblI)
-	h.dblI.Add(h.dblI, opt.Mul(a.dblI, b.dblR))
-	h.dblI.Add(h.dblI, opt.Mul(a.dblJ, b.dblK))
-	h.dblI.Sub(h.dblI, opt.Mul(a.dblK, b.dblJ))
-	h.dblI.Rsh(h.dblI, 1)
+	i.Mul(a.dblR, b.dblI)
+	i.Add(i, opt.Mul(a.dblI, b.dblR))
+	i.Add(i, opt.Mul(a.dblJ, b.dblK))
+	i.Sub(i, opt.Mul(a.dblK, b.dblJ))
+	i.Rsh(i, 1)
 
 	// j part
-	h.dblJ.Mul(a.dblR, b.dblJ)
-	h.dblJ.Sub(h.dblJ, opt.Mul(a.dblI, b.dblK))
-	h.dblJ.Add(h.dblJ, opt.Mul(a.dblJ, b.dblR))
-	h.dblJ.Add(h.dblJ, opt.Mul(a.dblK, b.dblI))
-	h.dblJ.Rsh(h.dblJ, 1)
+	j.Mul(a.dblR, b.dblJ)
+	j.Sub(j, opt.Mul(a.dblI, b.dblK))
+	j.Add(j, opt.Mul(a.dblJ, b.dblR))
+	j.Add(j, opt.Mul(a.dblK, b.dblI))
+	j.Rsh(j, 1)
 
 	// k part
-	h.dblK.Mul(a.dblR, b.dblK)
-	h.dblK.Add(h.dblK, opt.Mul(a.dblI, b.dblJ))
-	h.dblK.Sub(h.dblK, opt.Mul(a.dblJ, b.dblI))
-	h.dblK.Add(h.dblK, opt.Mul(a.dblK, b.dblR))
-	h.dblK.Rsh(h.dblK, 1)
+	k.Mul(a.dblR, b.dblK)
+	k.Add(k, opt.Mul(a.dblI, b.dblJ))
+	k.Sub(k, opt.Mul(a.dblJ, b.dblI))
+	k.Add(k, opt.Mul(a.dblK, b.dblR))
+	k.Rsh(k, 1)
+
+	h.dblR, h.dblI, h.dblJ, h.dblK = r, i, j, k
 
 	return h
 }
