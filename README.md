@@ -2,7 +2,8 @@
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/txaty/go-bigcomplex.svg)](https://pkg.go.dev/github.com/txaty/go-bigcomplex)
 [![Go Report Card](https://goreportcard.com/badge/github.com/txaty/go-bigcomplex)](https://goreportcard.com/report/github.com/txaty/go-bigcomplex)
-![Coverage](https://img.shields.io/badge/Coverage-45.8%25-yellow)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/3a9bb5ff5cb64dcf83903ca998a9144d)](https://app.codacy.com/gh/txaty/go-merkletree/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+[![MIT license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
 
 Big complex number calculation library for Go (with [math/big](https://pkg.go.dev/math/big)).
 
@@ -10,12 +11,16 @@ Currently, the library supports:
 
 1. Gaussian integer, complex numbers whose real and imaginary parts are both integers:
 
-   ![gaussian_int](asset/image/gaussian_integer_formula.jpg)
+$$
+Z[i] = \{ a + bi \;|\; a, b \in \mathbb{Z} \}, \quad \text{where } i^2 = -1.
+$$
 
 2. Hurwitz quaternion, quaternions whose components are either all integers or all half-integers (halves of odd
    integers; a mixture of integers and half-integers is excluded):
 
-   ![hurwitz_int](asset/image/hurwitz_integer_formula.jpg)
+$$
+H = \{ a + bi + cj + dk \in \mathbb{H} \;|\; a, b, c, d \in \mathbb{Z} \; \text{or} \; b, c, d \in \mathbb{Z} + \frac{1}{2}  \}.
+$$
 
 ## Installation
 

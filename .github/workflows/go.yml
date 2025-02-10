@@ -81,6 +81,8 @@ jobs:
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
         if: success()
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
 
   analysis:
     name: Codacy Analysis
