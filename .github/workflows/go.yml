@@ -1,4 +1,4 @@
-name: Go
+name: Go Build, Test, and Analyze Pipeline
 
 on:
   push:
@@ -6,78 +6,94 @@ on:
   pull_request:
     branches: [ "main" ]
 
+env:
+  GO_VERSION: 1.23.6
+
 jobs:
 
   build:
+    name: Build
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-    - name: Set up Go
-      uses: actions/setup-go@v3
-      with:
-        go-version: 1.18
-
-    - name: Build
-      run: go build -v ./...
-
-    - name: Test
-      run: go test -v ./...
-      
-    - name: Run golangci-lint
-      # You may pin to the exact commit or the version.
-      # uses: golangci/golangci-lint-action@537aa1903e5d359d0b27dbc19ddd22c5087f3fbc
-      uses: golangci/golangci-lint-action@v3.2.0
-      
-  test:
-    runs-on: ubuntu-latest
-    name: Update coverage badge
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      - name: Set up Go
+        uses: actions/setup-go@v5
         with:
-          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal access token.
-          fetch-depth: 0 # otherwise, there would be errors pushing refs to the destination repository.
-      
-      - name: Setup go
-        uses: actions/setup-go@v2
-        with:
-          go-version: '1.14.4'
+          go-version: ${{ env.GO_VERSION }}
 
-      - uses: actions/cache@v2
+      - name: Cache Go modules
+        uses: actions/cache@v4
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
 
-      - name: Run Test
-        run: |
-          go test -v ./... -covermode=count -coverprofile=coverage.out
-          go tool cover -func=coverage.out -o=coverage.out
+      - name: Build
+        run: make build
 
-      - name: Go Coverage Badge  # Pass the `coverage.out` output to this action
-        uses: tj-actions/coverage-badge-go@v1.2
+  test:
+    name: Unit Test
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
         with:
-          filename: coverage.out
+          go-version: ${{ env.GO_VERSION }}
 
-      - name: Verify Changed files
-        uses: tj-actions/verify-changed-files@v9.1
-        id: verify-changed-files
+      - name: Unit Test with Mocking
+        run: make test_with_mock
+
+  lint:
+    name: Linting with golangci-lint
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
         with:
-          files: README.md
+          go-version: ${{ env.GO_VERSION }}
 
-      - name: Commit changes
-        if: steps.verify-changed-files.outputs.files_changed == 'true'
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add README.md
-          git commit -m "chore: Updated coverage badge."
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v6
 
-      - name: Push changes
-        if: steps.verify-changed-files.outputs.files_changed == 'true'
-        uses: ad-m/github-push-action@master
+  coverage:
+    name: Coverage and Codecov Upload
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
         with:
-          github_token: ${{ github.token }}
-          branch: ${{ github.head_ref }}
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: Run coverage
+        run: make test_ci_coverage
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        if: success()
+
+  analysis:
+    name: Codacy Analysis
+    needs: coverage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: Codacy Analysis CLI
+        uses: codacy/codacy-analysis-cli-action@master
+        if: success()

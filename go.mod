@@ -1,3 +1,3 @@
 module github.com/txaty/go-bigcomplex
 
-go 1.18
+go 1.23.6
