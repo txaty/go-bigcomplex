@@ -26,14 +26,14 @@ import (
 	"math/big"
 )
 
-// GaussianInt implements Gaussian integer
-// In number theory, a Gaussian integer is a complex number whose real and imaginary parts are both integers
+// GaussianInt represents a Gaussian integer, that is, a complex number
+// whose real and imaginary parts are both integers.
 type GaussianInt struct {
-	R *big.Int // real part
-	I *big.Int // imaginary part
+	R *big.Int // Real part
+	I *big.Int // Imaginary part
 }
 
-// String returns the string representation of the Gaussian integer
+// String returns the string representation of the Gaussian integer.
 func (g *GaussianInt) String() string {
 	rSign := g.R.Sign()
 	iSign := g.I.Sign()
@@ -59,7 +59,7 @@ func (g *GaussianInt) String() string {
 	return res
 }
 
-// NewGaussianInt declares a new Gaussian integer with the real part and imaginary part
+// NewGaussianInt creates a new Gaussian integer with the specified real and imaginary parts.
 func NewGaussianInt(r *big.Int, i *big.Int) *GaussianInt {
 	return &GaussianInt{
 		R: new(big.Int).Set(r),
@@ -67,7 +67,7 @@ func NewGaussianInt(r *big.Int, i *big.Int) *GaussianInt {
 	}
 }
 
-// Set sets the Gaussian integer to the given Gaussian integer
+// Set assigns the value of another Gaussian integer to this one.
 func (g *GaussianInt) Set(a *GaussianInt) *GaussianInt {
 	if g.R == nil {
 		g.R = new(big.Int)
@@ -80,7 +80,7 @@ func (g *GaussianInt) Set(a *GaussianInt) *GaussianInt {
 	return g
 }
 
-// Update updates the Gaussian integer with the given real and imaginary parts
+// Update sets the real and imaginary parts of the Gaussian integer.
 func (g *GaussianInt) Update(r, i *big.Int) *GaussianInt {
 	if g.R == nil {
 		g.R = new(big.Int)
@@ -93,7 +93,7 @@ func (g *GaussianInt) Update(r, i *big.Int) *GaussianInt {
 	return g
 }
 
-// Add adds two Gaussian integers
+// Add computes the sum of two Gaussian integers and stores the result in the receiver.
 func (g *GaussianInt) Add(a, b *GaussianInt) *GaussianInt {
 	if g.R == nil {
 		g.R = new(big.Int)
@@ -106,7 +106,7 @@ func (g *GaussianInt) Add(a, b *GaussianInt) *GaussianInt {
 	return g
 }
 
-// Sub subtracts two Gaussian integers
+// Sub subtracts one Gaussian integer from another and stores the result in the receiver.
 func (g *GaussianInt) Sub(a, b *GaussianInt) *GaussianInt {
 	if g.R == nil {
 		g.R = new(big.Int)
@@ -119,8 +119,10 @@ func (g *GaussianInt) Sub(a, b *GaussianInt) *GaussianInt {
 	return g
 }
 
-// Prod returns the products of two Gaussian integers
+// Prod calculates the product of two Gaussian integers and stores the result in the receiver.
 func (g *GaussianInt) Prod(a, b *GaussianInt) *GaussianInt {
+	// Compute: (a.R + a.I*i) * (b.R + b.I*i)
+	// = (a.R*b.R - a.I*b.I) + (a.R*b.I + a.I*b.R)*i
 	r := new(big.Int).Mul(a.R, b.R)
 	opt := iPool.Get().(*big.Int)
 	defer iPool.Put(opt)
@@ -131,23 +133,25 @@ func (g *GaussianInt) Prod(a, b *GaussianInt) *GaussianInt {
 	return g
 }
 
-// Conj obtains the conjugate of the original Gaussian integer
+// Conj computes the conjugate of the given Gaussian integer and stores it in the receiver.
 func (g *GaussianInt) Conj(origin *GaussianInt) *GaussianInt {
+	// The conjugate of (R + I*i) is (R - I*i).
 	img := new(big.Int).Neg(origin.I)
 	g.Update(origin.R, img)
 	return g
 }
 
-// Norm obtains the norm of the Gaussian integer
+// Norm returns the norm of the Gaussian integer (R^2 + I^2).
 func (g *GaussianInt) Norm() *big.Int {
 	norm := new(big.Int).Mul(g.R, g.R)
-	opt := iPool.Get().(*big.Int).Mul(g.I, g.I)
+	opt := iPool.Get().(*big.Int)
 	defer iPool.Put(opt)
+	opt.Mul(g.I, g.I)
 	norm.Add(norm, opt)
 	return norm
 }
 
-// Copy copies the Gaussian integer
+// Copy creates a deep copy of the Gaussian integer.
 func (g *GaussianInt) Copy() *GaussianInt {
 	return NewGaussianInt(
 		new(big.Int).Set(g.R),
@@ -155,77 +159,78 @@ func (g *GaussianInt) Copy() *GaussianInt {
 	)
 }
 
-// Div performs Euclidean division of two Gaussian integers, i.e. a/b
-// the remainder is stored in the Gaussian integer that calls the method
-// the quotient is returned as a new Gaussian integer
+// Div performs Euclidean division of two Gaussian integers (a / b).
+// The remainder is stored in the receiver, and the quotient is returned as a new Gaussian integer.
 func (g *GaussianInt) Div(a, b *GaussianInt) *GaussianInt {
-	bConj := giPool.Get().(*GaussianInt).Conj(b)
-	defer giPool.Put(bConj)
-	numerator := giPool.Get().(*GaussianInt).Prod(a, bConj)
-	defer giPool.Put(numerator)
-	denominator := giPool.Get().(*GaussianInt).Prod(b, bConj)
-	defer giPool.Put(denominator)
+	// Compute the conjugate of b.
+	bConj := new(GaussianInt).Conj(b)
+	// Numerator = a * conjugate(b)
+	numerator := new(GaussianInt).Prod(a, bConj)
+	// Denominator = b * conjugate(b)
+	denominator := new(GaussianInt).Prod(b, bConj)
+	// Use the real part of the denominator for the division.
 	deFloat := fPool.Get().(*big.Float).SetInt(denominator.R)
 	defer fPool.Put(deFloat)
 
+	// Compute the real quotient component.
 	realScalar := fPool.Get().(*big.Float).SetInt(numerator.R)
 	defer fPool.Put(realScalar)
 	realScalar.Quo(realScalar, deFloat)
-	imagScalar := fPool.Get().(*big.Float).SetInt(numerator.I)
-	defer fPool.Put(imagScalar)
-	imagScalar.Quo(imagScalar, deFloat)
+	// Compute the imaginary quotient component.
+	imgScalar := fPool.Get().(*big.Float).SetInt(numerator.I)
+	defer fPool.Put(imgScalar)
+	imgScalar.Quo(imgScalar, deFloat)
 
+	// Round the computed float values to the nearest integers.
 	rsInt := iPool.Get().(*big.Int)
 	defer iPool.Put(rsInt)
 	rsInt = roundFloat(realScalar)
 	isInt := iPool.Get().(*big.Int)
 	defer iPool.Put(isInt)
-	isInt = roundFloat(imagScalar)
+	isInt = roundFloat(imgScalar)
 	quotient := NewGaussianInt(rsInt, isInt)
-	opt := giPool.Get().(*GaussianInt)
-	defer giPool.Put(opt)
-	g.Sub(a, opt.Prod(quotient, b))
+
+	// Compute the remainder: remainder = a - (quotient * b)
+	opt := new(GaussianInt).Prod(quotient, b)
+	g.Sub(a, opt)
 	return quotient
 }
 
-// Equals checks if two Gaussian integers are equal
+// Equals returns true if the Gaussian integer is equal to the given Gaussian integer.
 func (g *GaussianInt) Equals(a *GaussianInt) bool {
 	return g.R.Cmp(a.R) == 0 && g.I.Cmp(a.I) == 0
 }
 
-// IsZero returns true if the Gaussian integer is equal to zero
+// IsZero returns true if the Gaussian integer is zero.
 func (g *GaussianInt) IsZero() bool {
 	return g.R.Sign() == 0 && g.I.Sign() == 0
 }
 
-// IsOne returns true if the Gaussian integer is equal to one
+// IsOne returns true if the Gaussian integer equals one.
 func (g *GaussianInt) IsOne() bool {
 	return g.R.Sign() == 1 && g.I.Sign() == 0
 }
 
-// CmpNorm compares the norm of two Gaussian integers
+// CmpNorm compares the norms of two Gaussian integers.
 func (g *GaussianInt) CmpNorm(a *GaussianInt) int {
 	return g.Norm().Cmp(a.Norm())
 }
 
-// GCD calculates the greatest common divisor of two Gaussian integers using Euclidean algorithm
-// the result is stored in the Gaussian integer that calls the method and returned
+// GCD calculates the greatest common divisor of two Gaussian integers using the Euclidean algorithm.
+// The result is stored in the receiver and also returned as a new Gaussian integer.
 func (g *GaussianInt) GCD(a, b *GaussianInt) *GaussianInt {
-	ac := giPool.Get().(*GaussianInt).Set(a)
-	defer giPool.Put(ac)
-	bc := giPool.Get().(*GaussianInt).Set(b)
-	defer giPool.Put(bc)
+	ac := new(GaussianInt).Set(a)
+	bc := new(GaussianInt).Set(b)
 
 	if ac.CmpNorm(bc) < 0 {
 		ac, bc = bc, ac
 	}
-	remainder := giPool.Get().(*GaussianInt)
-	defer giPool.Put(remainder)
+	remainder := new(GaussianInt)
 	for {
 		remainder.Div(ac, bc)
 		if remainder.IsZero() {
 			g.Set(bc)
-			return new(GaussianInt).Set(bc)
+			return NewGaussianInt(bc.R, bc.I)
 		}
 		ac.Set(bc)
 		bc.Set(remainder)
