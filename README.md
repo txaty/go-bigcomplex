@@ -13,13 +13,13 @@ Currently, the library supports:
 1. **Gaussian Integers**  
    Complex numbers whose real and imaginary parts are both integers:
    $$
-   \mathbb{Z}[i] = \{ a + bi \mid a, b \in \mathbb{Z} \}, \quad \text{where } i^2 = -1.
+   Z[i] = \{ a + bi \ |\ a, b \in \mathbb{Z} \}, \quad \text{where } i^2 = -1.
    $$
 
 2. **Hurwitz Quaternions**  
    Quaternions whose components are either all integers or all half‑integers (half‑integers being halves of odd integers; mixing integers and half‑integers is not allowed):
    $$
-   H = \{ a + bi + cj + dk \in \mathbb{H} \mid a, b, c, d \in \mathbb{Z} \text{ or } a, b, c, d \in \mathbb{Z} + \tfrac{1}{2} \}.
+   H = \{ a + bi + cj + dk \in \mathbb{H} \ |\ a, b, c, d \in \mathbb{Z} \ \text{or} \ b, c, d \in \mathbb{Z} + \frac{1}{2}  \}.
    $$
 
 ## Installation
@@ -73,7 +73,7 @@ realPart := real(c1)  // Retrieves the real part
 imagPart := imag(c1)  // Retrieves the imaginary part
 ```
 
-However, `complex64` (composed of two `float32` values) and `complex128` (composed of two `float64` values) are limited to fixed‑precision arithmetic and cannot handle very large numbers. 
+However, `complex64` (composed of two `float32` values) and `complex128` (composed of two `float64` values) are limited to fixed‑precision arithmetic and cannot handle very large numbers.
 For example, in finding the Lagrange Four Square Sum of a very large integer (1792 bits in size) for cryptographic range proof, we need to compute the Greatest Common Divisor (GCD) of Gaussian integers and the Greatest Common Right Divisor of Hurwitz integers. And the built-in complex number types cannot handle such large numbers.
 
 This motivated the development of Big Complex: a library for large‑scale complex number calculations using Go’s math/big package.
