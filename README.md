@@ -13,13 +13,13 @@ Currently, the library supports:
 1. **Gaussian Integers**  
    Complex numbers whose real and imaginary parts are both integers:
    $$
-   \mathbb{Z}[i] = \{ a + bi \mid a, b \in \mathbb{Z} \}, \quad \text{where } i^2 = -1.
+   Z[i] = \{ a + bi \ |\ a, b \in \mathbb{Z} \}, \quad \text{where } i^2 = -1.
    $$
 
 2. **Hurwitz Quaternions**  
    Quaternions whose components are either all integers or all half‑integers (half‑integers being halves of odd integers; mixing integers and half‑integers is not allowed):
    $$
-   H = \{ a + bi + cj + dk \in \mathbb{H} \mid a, b, c, d \in \mathbb{Z} \text{ or } a, b, c, d \in \mathbb{Z} + \tfrac{1}{2} \}.
+   H = \{ a + bi + cj + dk \in \mathbb{H} \ |\ a, b, c, d \in \mathbb{Z} \ \text{or} \ b, c, d \in \mathbb{Z} + \frac{1}{2}  \}.
    $$
 
 ## Installation
