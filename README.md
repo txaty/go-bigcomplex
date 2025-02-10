@@ -6,22 +6,21 @@
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/f149e51e0475464d843477adba68b577)](https://app.codacy.com/gh/txaty/go-bigcomplex/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![MIT license](https://img.shields.io/badge/license-MIT-brightgreen.svg)](https://opensource.org/licenses/MIT)
 
-Big complex number calculation library for Go (with [math/big](https://pkg.go.dev/math/big)).
+Big complex number calculation library in Go (with [math/big](https://pkg.go.dev/math/big)).
 
 Currently, the library supports:
 
-1. Gaussian integer, complex numbers whose real and imaginary parts are both integers:
+1. **Gaussian Integers**  
+   Complex numbers whose real and imaginary parts are both integers:
+   $$
+   \mathbb{Z}[i] = \{ a + bi \mid a, b \in \mathbb{Z} \}, \quad \text{where } i^2 = -1.
+   $$
 
-$$
-Z[i] = \{ a + bi \ |\ a, b \in \mathbb{Z} \}, \quad \text{where } i^2 = -1.
-$$
-
-2. Hurwitz quaternion, quaternions whose components are either all integers or all half-integers (halves of odd
-   integers; a mixture of integers and half-integers is excluded):
-
-$$
-H = \{ a + bi + cj + dk \in \mathbb{H} \ |\ a, b, c, d \in \mathbb{Z} \ \text{or} \ b, c, d \in \mathbb{Z} + \frac{1}{2}  \}.
-$$
+2. **Hurwitz Quaternions**  
+   Quaternions whose components are either all integers or all half‑integers (half‑integers being halves of odd integers; mixing integers and half‑integers is not allowed):
+   $$
+   H = \{ a + bi + cj + dk \in \mathbb{H} \mid a, b, c, d \in \mathbb{Z} \text{ or } a, b, c, d \in \mathbb{Z} + \tfrac{1}{2} \}.
+   $$
 
 ## Installation
 
@@ -64,24 +63,21 @@ func main() {
 
 ## Why This Library?
 
-Fan fact: Golang has native complex number types: ```complex64``` and ```complex128```.
+Fan fact: Golang has native complex number types: `complex64` and `complex128`.
 
 ```go
-c1 := complex(10, 11) // constructor init
-c2 := 10 + 11i        // complex number init syntax
+c1 := complex(10, 11) // Using the complex constructor
+c2 := 10 + 11i        // Using literal syntax
 
-realPart := real(c1)    // gets real part
-imagPart := imag(c1)    // gets imaginary part
+realPart := real(c1)  // Retrieves the real part
+imagPart := imag(c1)  // Retrieves the imaginary part
 ```
 
-```complex64``` represents ```float64```  real and imaginary data, and ```complex128``` represents ```float128``` real
-and imaginary data.
-They are easy to use, but unfortunately they are incapable for handling very large complex numbers.
+However, `complex64` (composed of two `float32` values) and `complex128` (composed of two `float64` values) are limited to fixed‑precision arithmetic and cannot handle very large numbers. 
+For example, in finding the Lagrange Four Square Sum of a very large integer (1792 bits in size) for cryptographic range proof, we need to compute the Greatest Common Divisor (GCD) of Gaussian integers and the Greatest Common Right Divisor of Hurwitz integers. And the built-in complex number types cannot handle such large numbers.
 
-For instance, in finding the Lagrange Four Square Sum of a very large integer (1792 bits in size) for cryptographic
-range proof,
-we need to compute the Greatest Common Divisor (GCD) of Gaussian integers and the Greatest Common Right Divisor of
-Hurwitz integers. And the built-in complex number types can not handle such large numbers.
+This motivated the development of Big Complex: a library for large‑scale complex number calculations using Go’s math/big package.
 
-So I came up with the idea of building a library for large complex number calculation with Golang ```math/big```
-package.
+## License
+
+This project is licensed under the MIT License.

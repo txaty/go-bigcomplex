@@ -34,10 +34,4 @@ var (
 	fPool = sync.Pool{
 		New: func() interface{} { return new(big.Float) },
 	}
-	giPool = sync.Pool{
-		New: func() interface{} { return new(GaussianInt) },
-	}
-	hiPool = sync.Pool{
-		New: func() interface{} { return new(HurwitzInt) },
-	}
 )
